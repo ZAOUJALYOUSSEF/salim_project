@@ -296,14 +296,7 @@ export default function HomePage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
             >
-              <motion.div
-                className="inline-flex items-center gap-2 bg-emerald-500/20 border border-emerald-500/30 px-6 py-3 rounded-full text-emerald-300 mb-8 backdrop-blur-sm"
-                animate={{ scale: [1, 1.05, 1] }}
-                transition={{ duration: 2, repeat: Infinity }}
-              >
-                <Sparkles className="w-5 h-5" />
-                <span className="font-semibold">La révolution du marketing local en Normandie</span>
-              </motion.div>
+
 
               <h1 className="text-6xl md:text-8xl font-black text-white mb-8 leading-tight">
                 Votre marque dans<br />
