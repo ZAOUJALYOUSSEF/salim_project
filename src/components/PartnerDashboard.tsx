@@ -1,9 +1,20 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Package, Store, Download, MapPin, Users } from 'lucide-react';
-import { supabase, Partner } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import DashboardLayout from './DashboardLayout';
+
+// Types
+interface Partner {
+  id: string;
+  business_name: string;
+  business_type: string;
+  address: string;
+  city: string;
+  postal_code: string;
+  status: 'pending' | 'active' | 'suspended';
+  bag_quantity: number;
+}
 
 interface CampaignPartner {
   id: string;
@@ -20,6 +31,49 @@ interface CampaignPartner {
   };
 }
 
+// Données mockées
+const mockPartner: Partner = {
+  id: '1',
+  business_name: 'Boulangerie du Centre',
+  business_type: 'bakery',
+  address: '15 Rue de la République',
+  city: 'Caen',
+  postal_code: '14000',
+  status: 'active',
+  bag_quantity: 500
+};
+
+const mockCampaignPartners: CampaignPartner[] = [
+  {
+    id: '1',
+    bags_allocated: 300,
+    bags_distributed: 245,
+    campaigns: {
+      campaign_name: 'Printemps 2024',
+      start_date: '2024-03-01',
+      end_date: '2024-05-31',
+      clients: {
+        company_name: 'Dist2',
+        sector: 'Sport'
+      }
+    }
+  },
+  {
+    id: '2',
+    bags_allocated: 200,
+    bags_distributed: 80,
+    campaigns: {
+      campaign_name: 'Été 2024',
+      start_date: '2024-06-01',
+      end_date: '2024-08-31',
+      clients: {
+        company_name: 'Dist1',
+        sector: 'Distribution'
+      }
+    }
+  }
+];
+
 export default function PartnerDashboard() {
   const { user } = useAuth();
   const [partner, setPartner] = useState<Partner | null>(null);
@@ -27,47 +81,16 @@ export default function PartnerDashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (user) {
-      fetchPartnerData();
-    }
-  }, [user]);
+    fetchPartnerData();
+  }, []);
 
   const fetchPartnerData = async () => {
-    if (!user) return;
-
-    const { data: partnerData } = await supabase
-      .from('partners')
-      .select('*')
-      .eq('user_id', user.id)
-      .maybeSingle();
-
-    if (partnerData) {
-      setPartner(partnerData);
-
-      const { data: cpData } = await supabase
-        .from('campaign_partners')
-        .select(`
-          id,
-          bags_allocated,
-          bags_distributed,
-          campaigns (
-            campaign_name,
-            start_date,
-            end_date,
-            clients (
-              company_name,
-              sector
-            )
-          )
-        `)
-        .eq('partner_id', partnerData.id);
-
-      if (cpData) {
-        setCampaignPartners(cpData as any);
-      }
-    }
-
-    setLoading(false);
+    // Simulation du chargement
+    setTimeout(() => {
+      setPartner(mockPartner);
+      setCampaignPartners(mockCampaignPartners);
+      setLoading(false);
+    }, 1000);
   };
 
   if (loading) {

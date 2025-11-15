@@ -93,8 +93,13 @@ export default function Header() {
               transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
               className="relative"
             >
-              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center bg-gradient-to-br from-emerald-600 to-emerald-500 shadow-lg shadow-emerald-600/30">
-                <ShoppingBag className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+              {/* Remplacement de l'icône par une image */}
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center bg-white shadow-lg overflow-hidden">
+                <img 
+                  src="../dist/logo.png" // Chemin vers votre image de logo
+                  alt="BagPub Logo" 
+                  className="w-full h-full object-cover"
+                />
               </div>
               <motion.div
                 className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 rounded-full"
@@ -107,7 +112,7 @@ export default function Header() {
                 style={{ color: textColor }}
                 className="text-xl sm:text-2xl font-black"
               >
-                BagPresto
+                BagPub
               </motion.h1>
               <p className="text-xs text-emerald-600 font-semibold">
                 Normandie

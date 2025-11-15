@@ -1,13 +1,35 @@
 import { motion } from 'framer-motion';
 import { Building2, Mail, Phone, MapPin, Briefcase, MessageSquare, Sparkles, TrendingUp, Users } from 'lucide-react';
 import { useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import { supabase } from '../lib/supabase';
 
 const NORMANDY_DEPARTMENTS = ['14', '27', '50', '61', '76'];
 
+// Mock authentication functions
+const mockSignUp = async (email: string, password: string, userData: any) => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve({ 
+        error: null, 
+        data: { 
+          user: { 
+            id: 'mock-user-id', 
+            email: email 
+          } 
+        } 
+      });
+    }, 1000);
+  });
+};
+
+const mockSignIn = async (email: string, password: string) => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve({ error: null });
+    }, 1000);
+  });
+};
+
 export default function ClientFormSection() {
-  const { signUp, signIn } = useAuth();
   const [isLogin, setIsLogin] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -42,11 +64,11 @@ export default function ClientFormSection() {
 
     try {
       if (isLogin) {
-        const { error } = await signIn(formData.email, formData.password);
+        const { error } = await mockSignIn(formData.email, formData.password);
         if (error) throw error;
         setSuccess(true);
       } else {
-        const { error: signUpError } = await signUp(
+        const { error: signUpError } = await mockSignUp(
           formData.email,
           formData.password,
           {
@@ -58,19 +80,17 @@ export default function ClientFormSection() {
 
         if (signUpError) throw signUpError;
 
-        const { data: { user: newUser } } = await supabase.auth.getUser();
-        if (!newUser) throw new Error('User creation failed');
-
-        const { error: clientError } = await supabase.from('clients').insert({
-          user_id: newUser.id,
+        // Mock client creation
+        const mockClientData = {
+          user_id: 'mock-user-id',
           company_name: formData.company_name,
           sector: formData.sector,
           postal_code: formData.postal_code,
           message: formData.message,
           status: 'pending'
-        });
+        };
 
-        if (clientError) throw clientError;
+        console.log('Client created:', mockClientData);
         setSuccess(true);
       }
     } catch (err: any) {

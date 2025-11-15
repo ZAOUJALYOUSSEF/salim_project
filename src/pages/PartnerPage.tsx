@@ -1,9 +1,9 @@
+// pages/PartnerPage.tsx
 import { motion } from 'framer-motion';
 import { Store, Mail, Phone, MapPin, Building2, Package, Sparkles, Check, ArrowRight, Gift, Heart, Users, TrendingUp } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { supabase } from '../lib/supabase';
 
 const NORMANDY_DEPARTMENTS = ['14', '27', '50', '61', '76'];
 
@@ -54,11 +54,14 @@ export default function PartnerPage() {
 
     try {
       if (step === 'login') {
-        const { error } = await signIn(formData.email, formData.password);
+        // Utiliser signIn avec userType 'partner'
+        const { error } = await signIn(formData.email, formData.password, 'partner');
         if (error) throw error;
-        navigate('/');
+        // Rediriger vers le dashboard après connexion
+        navigate('/dashboard');
       } else {
-        const { error: signUpError } = await signUp(
+        // Inscription
+        const { data: authData, error: signUpError } = await signUp(
           formData.email,
           formData.password,
           {
@@ -70,11 +73,13 @@ export default function PartnerPage() {
 
         if (signUpError) throw signUpError;
 
-        const { data: { user: newUser } } = await supabase.auth.getUser();
-        if (!newUser) throw new Error('Erreur lors de la création du compte');
+        if (!authData?.user) {
+          throw new Error('Erreur lors de la création du compte utilisateur');
+        }
 
-        const { error: partnerError } = await supabase.from('partners').insert({
-          user_id: newUser.id,
+        // Stocker les données du partenaire en localStorage
+        const partnerData = {
+          user_id: authData.user.id,
           business_name: formData.business_name,
           business_type: formData.business_type,
           address: formData.address,
@@ -82,13 +87,29 @@ export default function PartnerPage() {
           city: formData.city,
           bag_quantity: formData.bag_quantity,
           status: 'pending'
-        });
+        };
 
-        if (partnerError) throw partnerError;
+        localStorage.setItem('partner_data', JSON.stringify(partnerData));
+        console.log('Partner created:', partnerData);
         setSuccess(true);
       }
     } catch (err: any) {
-      setError(err.message || 'Une erreur est survenue');
+      console.error('Registration error:', err);
+      
+      // Messages d'erreur plus user-friendly
+      let errorMessage = 'Une erreur est survenue';
+      
+      if (err.message?.includes('Failed to fetch')) {
+        errorMessage = 'Erreur de connexion. Vérifiez votre connexion internet.';
+      } else if (err.message?.includes('User already registered')) {
+        errorMessage = 'Un compte avec cet email existe déjà.';
+      } else if (err.message?.includes('Invalid login credentials')) {
+        errorMessage = 'Email ou mot de passe incorrect.';
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+      
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }

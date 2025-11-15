@@ -1,3 +1,4 @@
+// App.tsx
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import HomePage from './pages/HomePage';
@@ -6,6 +7,7 @@ import PartnerPage from './pages/PartnerPage';
 import ClientDashboard from './components/ClientDashboard';
 import PartnerDashboard from './components/PartnerDashboard';
 import AdminDashboard from './components/AdminDashboard';
+import AdminLogin from './components/AdminLogin';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
@@ -29,7 +31,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 }
 
 function DashboardRouter() {
-  const { profile, loading } = useAuth();
+  const { user, loading } = useAuth();
 
   if (loading) {
     return (
@@ -42,22 +44,26 @@ function DashboardRouter() {
     );
   }
 
-  if (!profile) {
+  if (!user) {
     return <Navigate to="/" replace />;
   }
 
-  if (profile.user_type === 'client') {
+  // Déterminer le type d'utilisateur basé sur les metadata
+  const userType = user.user_metadata?.user_type;
+
+  if (userType === 'client') {
     return <ClientDashboard />;
   }
 
-  if (profile.user_type === 'partner') {
+  if (userType === 'partner') {
     return <PartnerDashboard />;
   }
 
-  if (profile.user_type === 'admin') {
+  if (userType === 'admin') {
     return <AdminDashboard />;
   }
 
+  // Par défaut, rediriger vers la page d'accueil
   return <Navigate to="/" replace />;
 }
 
@@ -69,6 +75,7 @@ function AppRoutes() {
       <Route path="/" element={user ? <DashboardRouter /> : <HomePage />} />
       <Route path="/client" element={<ClientPage />} />
       <Route path="/partner" element={<PartnerPage />} />
+      <Route path="/admin" element={<AdminLogin />} />
       <Route
         path="/dashboard"
         element={

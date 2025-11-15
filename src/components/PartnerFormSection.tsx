@@ -2,7 +2,6 @@ import { motion } from 'framer-motion';
 import { Store, Mail, Phone, MapPin, Building2, Package, Sparkles, Gift, Heart } from 'lucide-react';
 import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { supabase } from '../lib/supabase';
 
 const NORMANDY_DEPARTMENTS = ['14', '27', '50', '61', '76'];
 
@@ -51,43 +50,18 @@ export default function PartnerFormSection() {
     }
 
     try {
-      if (isLogin) {
-        const { error } = await signIn(formData.email, formData.password);
-        if (error) throw error;
+      // Simulation de l'inscription/connexion
+      setTimeout(() => {
+        if (isLogin) {
+          console.log('Connexion simulée:', formData.email);
+        } else {
+          console.log('Inscription simulée:', formData);
+        }
         setSuccess(true);
-      } else {
-        const { error: signUpError } = await signUp(
-          formData.email,
-          formData.password,
-          {
-            full_name: formData.full_name,
-            phone: formData.phone,
-            user_type: 'partner'
-          }
-        );
-
-        if (signUpError) throw signUpError;
-
-        const { data: { user: newUser } } = await supabase.auth.getUser();
-        if (!newUser) throw new Error('User creation failed');
-
-        const { error: partnerError } = await supabase.from('partners').insert({
-          user_id: newUser.id,
-          business_name: formData.business_name,
-          business_type: formData.business_type,
-          address: formData.address,
-          postal_code: formData.postal_code,
-          city: formData.city,
-          bag_quantity: formData.bag_quantity,
-          status: 'pending'
-        });
-
-        if (partnerError) throw partnerError;
-        setSuccess(true);
-      }
+        setLoading(false);
+      }, 1500);
     } catch (err: any) {
       setError(err.message || 'Une erreur est survenue');
-    } finally {
       setLoading(false);
     }
   };

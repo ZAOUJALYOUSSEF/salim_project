@@ -1,9 +1,9 @@
+// pages/ClientPage.tsx
 import { motion } from 'framer-motion';
 import { Building2, Mail, Phone, MapPin, Briefcase, MessageSquare, Sparkles, Check, ArrowRight, TrendingUp, Target, Zap, Award } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { supabase } from '../lib/supabase';
 
 const NORMANDY_DEPARTMENTS = ['14', '27', '50', '61', '76'];
 
@@ -36,19 +36,31 @@ export default function ClientPage() {
     setError('');
     setLoading(true);
 
-    if (step === 'register' && !isNormandyPostalCode(formData.postal_code)) {
-      setError('Le code postal doit être en Normandie (14, 27, 50, 61, 76)');
-      setLoading(false);
-      return;
+    // Validation
+    if (step === 'register') {
+      if (!isNormandyPostalCode(formData.postal_code)) {
+        setError('Le code postal doit être en Normandie (14, 27, 50, 61, 76)');
+        setLoading(false);
+        return;
+      }
+      
+      if (formData.password.length < 6) {
+        setError('Le mot de passe doit contenir au moins 6 caractères');
+        setLoading(false);
+        return;
+      }
     }
 
     try {
       if (step === 'login') {
         const { error } = await signIn(formData.email, formData.password);
         if (error) throw error;
-        navigate('/');
+        navigate('/dashboard');
       } else {
-        const { error: signUpError } = await signUp(
+        console.log('Starting registration process...');
+        
+        // Utiliser le contexte d'authentification
+        const { data: authData, error: signUpError } = await signUp(
           formData.email,
           formData.password,
           {
@@ -58,25 +70,35 @@ export default function ClientPage() {
           }
         );
 
-        if (signUpError) throw signUpError;
+        if (signUpError) {
+          console.error('SignUp error:', signUpError);
+          throw signUpError;
+        }
 
-        const { data: { user: newUser } } = await supabase.auth.getUser();
-        if (!newUser) throw new Error('Erreur lors de la création du compte');
+        if (!authData?.user) {
+          throw new Error('Erreur lors de la création du compte utilisateur');
+        }
 
-        const { error: clientError } = await supabase.from('clients').insert({
-          user_id: newUser.id,
-          company_name: formData.company_name,
-          sector: formData.sector,
-          postal_code: formData.postal_code,
-          message: formData.message,
-          status: 'pending'
-        });
-
-        if (clientError) throw clientError;
+        console.log('Client registration successful');
         setSuccess(true);
       }
     } catch (err: any) {
-      setError(err.message || 'Une erreur est survenue');
+      console.error('Registration error:', err);
+      
+      // Messages d'erreur plus user-friendly
+      let errorMessage = 'Une erreur est survenue lors de l\'inscription';
+      
+      if (err.message?.includes('Failed to fetch')) {
+        errorMessage = 'Erreur de connexion. Vérifiez votre connexion internet.';
+      } else if (err.message?.includes('User already registered')) {
+        errorMessage = 'Un compte avec cet email existe déjà.';
+      } else if (err.message?.includes('Invalid login credentials')) {
+        errorMessage = 'Email ou mot de passe incorrect.';
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+      
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -354,7 +376,11 @@ export default function ClientPage() {
                         onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                         className="w-full px-4 py-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all text-lg"
                         placeholder="••••••••"
+                        minLength={6}
                       />
+                      {step === 'register' && (
+                        <p className="text-xs text-gray-500 mt-1">Minimum 6 caractères</p>
+                      )}
                     </div>
 
                     {step === 'register' && (

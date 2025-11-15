@@ -22,7 +22,7 @@ export default function DashboardLayout({ children, title, subtitle }: Dashboard
                 <ShoppingBag className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-gray-900">BagPresto</h1>
+                <h1 className="text-xl font-bold text-gray-900">BagPub</h1>
                 <p className="text-xs text-gray-500">{profile?.user_type === 'client' ? 'Espace Client' : profile?.user_type === 'partner' ? 'Espace Partenaire' : 'Espace Admin'}</p>
               </div>
             </div>

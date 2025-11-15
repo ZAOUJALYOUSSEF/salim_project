@@ -2,9 +2,15 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import { ShoppingBag, ArrowRight, Sparkles, TrendingUp, Users, Target, Zap, Check, Star, MapPin, Leaf } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { supabase, Statistics } from '../lib/supabase';
 import Header from '../components/Header';
 import FAQ from '../components/FAQ';
+
+interface Statistics {
+  total_bags_distributed: number;
+  total_partners: number;
+  co2_saved: string;
+  average_roi: string;
+}
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -19,8 +25,14 @@ export default function HomePage() {
   }, []);
 
   const fetchStats = async () => {
-    const { data } = await supabase.from('statistics').select('*').maybeSingle();
-    if (data) setStats(data);
+    // Mock data au lieu de Supabase
+    const mockStats: Statistics = {
+      total_bags_distributed: 12500,
+      total_partners: 67,
+      co2_saved: "+80%",
+      average_roi: "250%"
+    };
+    setStats(mockStats);
   };
 
   const features = [
@@ -82,7 +94,7 @@ export default function HomePage() {
       name: "Sophie Martin",
       business: "Restaurant Le Goût Normand",
       image: "👩‍🍳",
-      text: "Notre CA a augmenté de 45% en 3 mois. BagPresto a révolutionné notre visibilité locale !",
+      text: "Notre CA a augmenté de 45% en 3 mois. BagPub a révolutionné notre visibilité locale !",
       rating: 5
     },
     {
@@ -423,7 +435,7 @@ export default function HomePage() {
               </h2>
 
               <p className="text-2xl text-gray-600 mb-8 leading-relaxed">
-                Chaque sac BagPresto peut afficher <span className="font-bold text-emerald-600">jusqu'à 12 publicités</span> de marques locales, tout en mettant en avant votre commerce.
+                Chaque sac BagPub peut afficher <span className="font-bold text-emerald-600">jusqu'à 12 publicités</span> de marques locales, tout en mettant en avant votre commerce.
               </p>
 
               <div className="space-y-4 mb-8">
@@ -503,7 +515,7 @@ export default function HomePage() {
               >
                 <img
                   src="/Gemini_Generated_Image_ify66aify66aify6.png"
-                  alt="Sac BagPresto avec publicités"
+                  alt="Sac BagPub avec publicités"
                   className="w-full h-auto rounded-3xl shadow-2xl"
                 />
 
@@ -536,8 +548,6 @@ export default function HomePage() {
         </div>
       </section>
 
-
-
       {/* COMPARISON BEFORE/AFTER */}
       <section className="py-32 bg-white">
         <div className="max-w-7xl mx-auto px-6">
@@ -548,7 +558,7 @@ export default function HomePage() {
             className="text-center mb-16"
           >
             <h2 className="text-6xl font-black text-gray-900 mb-6">
-              Avant / Après <span className="text-emerald-600">BagPresto</span>
+              Avant / Après <span className="text-emerald-600">BagPub</span>
             </h2>
             <p className="text-2xl text-gray-600">
               Découvrez l'impact réel sur votre entreprise
@@ -599,7 +609,7 @@ export default function HomePage() {
               </div>
 
               <h3 className="text-3xl font-bold text-gray-900 mb-8 mt-8">
-                Avec BagPresto
+                Avec BagPub
               </h3>
 
               <div className="space-y-4">
@@ -625,7 +635,7 @@ export default function HomePage() {
                 whileTap={{ scale: 0.95 }}
                 className="mt-8 w-full py-4 bg-gradient-to-r from-emerald-600 to-green-600 text-white rounded-xl font-bold text-lg shadow-xl hover:shadow-2xl transition-all"
               >
-                Passer à BagPresto maintenant
+                Passer à BagPub maintenant
               </motion.button>
             </motion.div>
           </div>
@@ -729,7 +739,7 @@ export default function HomePage() {
             className="text-center mb-20"
           >
             <h2 className="text-6xl font-black text-gray-900 mb-6">
-              Pourquoi <span className="text-emerald-600">BagPresto</span> ?
+              Pourquoi <span className="text-emerald-600">BagPub</span> ?
             </h2>
             <p className="text-2xl text-gray-600 max-w-3xl mx-auto">
               La solution complète pour dominer votre marché local
@@ -890,6 +900,152 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* PARTNER SECTION */}
+      <section id="partner" className="py-32 bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+        <div className="max-w-7xl mx-auto px-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-20"
+          >
+            <h2 className="text-6xl font-black text-gray-900 mb-6">
+              Devenez <span className="text-blue-600">Partenaire</span> BagPub
+            </h2>
+            <p className="text-2xl text-gray-600 max-w-3xl mx-auto">
+              Rejoignez notre réseau de commerces premium et générez des revenus supplémentaires
+            </p>
+          </motion.div>
+
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+            >
+              <div className="space-y-8">
+                <div className="flex items-start gap-6">
+                  <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center flex-shrink-0">
+                    <Users className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold text-gray-900 mb-3">Gagnez des revenus passifs</h3>
+                    <p className="text-lg text-gray-600">
+                      Recevez une commission sur chaque sac distribué dans votre commerce. 
+                      Un revenu supplémentaire sans effort.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-6">
+                  <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center flex-shrink-0">
+                    <TrendingUp className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold text-gray-900 mb-3">Augmentez votre trafic</h3>
+                    <p className="text-lg text-gray-600">
+                      Attirez de nouveaux clients grâce à la visibilité offerte par 
+                      notre réseau de publicités locales.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-6">
+                  <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center flex-shrink-0">
+                    <Sparkles className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold text-gray-900 mb-3">Image éco-responsable</h3>
+                    <p className="text-lg text-gray-600">
+                      Renforcez votre image de marque en proposant des sacs 
+                      100% écologiques à vos clients.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-6">
+                  <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center flex-shrink-0">
+                    <Zap className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold text-gray-900 mb-3">Zéro contrainte</h3>
+                    <p className="text-lg text-gray-600">
+                      Nous gérons toute la logistique : production, livraison 
+                      et suivi. Vous n'avez qu'à distribuer.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <motion.button
+                onClick={() => navigate('/partner')}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="mt-12 px-12 py-6 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-2xl font-bold text-xl shadow-2xl hover:shadow-3xl transition-all inline-flex items-center gap-3"
+              >
+                Devenir Partenaire
+                <ArrowRight className="w-6 h-6" />
+              </motion.button>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="relative"
+            >
+              <div className="bg-white rounded-3xl p-10 shadow-2xl border border-gray-100">
+                <h3 className="text-3xl font-bold text-gray-900 mb-8 text-center">
+                  Avantages Partenaires
+                </h3>
+                
+                <div className="space-y-6">
+                  <div className="flex items-center gap-4 p-4 bg-blue-50 rounded-2xl">
+                    <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+                      <Check className="w-4 h-4 text-white" />
+                    </div>
+                    <span className="text-gray-700 font-medium">Commission attractive par sac</span>
+                  </div>
+
+                  <div className="flex items-center gap-4 p-4 bg-green-50 rounded-2xl">
+                    <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+                      <Check className="w-4 h-4 text-white" />
+                    </div>
+                    <span className="text-gray-700 font-medium">Livraison gratuite des sacs</span>
+                  </div>
+
+                  <div className="flex items-center gap-4 p-4 bg-purple-50 rounded-2xl">
+                    <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center flex-shrink-0">
+                      <Check className="w-4 h-4 text-white" />
+                    </div>
+                    <span className="text-gray-700 font-medium">Support dédié 7j/7</span>
+                  </div>
+
+                  <div className="flex items-center gap-4 p-4 bg-orange-50 rounded-2xl">
+                    <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center flex-shrink-0">
+                      <Check className="w-4 h-4 text-white" />
+                    </div>
+                    <span className="text-gray-700 font-medium">Tableau de bord en temps réel</span>
+                  </div>
+
+                  <div className="flex items-center gap-4 p-4 bg-indigo-50 rounded-2xl">
+                    <div className="w-8 h-8 bg-indigo-500 rounded-full flex items-center justify-center flex-shrink-0">
+                      <Check className="w-4 h-4 text-white" />
+                    </div>
+                    <span className="text-gray-700 font-medium">Flexibilité totale</span>
+                  </div>
+                </div>
+
+                <div className="mt-8 p-6 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-2xl text-white text-center">
+                  <div className="text-2xl font-bold mb-2">Rejoignez 500+ Commerces</div>
+                  <div className="text-blue-100">Déjà partenaires en Normandie</div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
       {/* FAQ */}
       <section id="faq" className="bg-white">
         <FAQ />
@@ -909,7 +1065,7 @@ export default function HomePage() {
               Prêt à dominer votre <span className="text-emerald-200">marché local</span> ?
             </h2>
             <p className="text-3xl text-emerald-100 mb-12">
-              Rejoignez les 500+ entreprises qui ont choisi BagPresto
+              Rejoignez les 500+ entreprises qui ont choisi BagPub
             </p>
 
             <motion.button
